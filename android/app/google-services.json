@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "869928462467",
+    "project_id": "rolebaseauth-6179c",
+    "storage_bucket": "rolebaseauth-6179c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:869928462467:android:c761f6d43aac2599df53b6",
+        "android_client_info": {
+          "package_name": "com.example.role_base_auth"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCHO-M7vjVwj039R8YaUOTjzR99GXUNykk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
