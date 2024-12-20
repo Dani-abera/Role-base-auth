@@ -1,51 +1,66 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:role_base_auth/login_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthService {
+  // Firebase Authentication instance
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  // Firestore instance
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // function to Sing Up
-  Future<String?> singup({
+  // Function to handle user signup
+  Future<String?> signup({
     required String name,
-    required String? role,
     required String email,
     required String password,
+    required String role,
   }) async {
     try {
+      // Create user in Firebase Authentication with email and password
       UserCredential userCredential =
-      await _auth.createUserWithEmailAndPassword(
-          email: email.trim(), password: password.trim());
-
-      // add data in firestore
-      await _firestore.collection("Users").doc(userCredential.user!.uid).set(
-        {'name': name.trim(), 'email': email.trim(), 'role': role},
+          await _auth.createUserWithEmailAndPassword(
+        email: email.trim(),
+        password: password.trim(),
       );
+
+      // Save additional user data (name, role) in Firestore
+      await _firestore.collection('users').doc(userCredential.user!.uid).set({
+        'name': name.trim(),
+        'email': email.trim(),
+        'role': role, // Role determines if user is Admin or User
+      });
+
+      return null; // Success: no error message
     } catch (e) {
-      return e.toString();
+      return e.toString(); // Error: return the exception message
     }
-    return null;
   }
 
-  // Function to Login
-
+  // Function to handle user login
   Future<String?> login({
     required String email,
     required String password,
   }) async {
     try {
-      UserCredential userCredential =
-      await _auth.signInWithEmailAndPassword(
-          email: email.trim(), password: password.trim());
+      // Sign in the user using Firebase Authentication
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
+        email: email.trim(),
+        password: password.trim(),
+      );
 
-      // add data in firestore
-      DocumentSnapshot docSnp =await _firestore.collection("Users").doc(userCredential.user!.uid).get();
-      return docSnp['role'];
+      // Fetch the user's role from Firestore to determine access level
+      DocumentSnapshot userDoc = await _firestore
+          .collection('users')
+          .doc(userCredential.user!.uid)
+          .get();
 
+      return userDoc['role']; // Return the user's role (Admin/User)
     } catch (e) {
-      return e.toString();
+      return e.toString(); // Error: return the exception message
     }
-    return null;
+  }
+
+  // for user log out
+  signOut() async {
+    _auth.signOut();
   }
 }
